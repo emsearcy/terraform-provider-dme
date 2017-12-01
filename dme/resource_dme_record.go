@@ -33,7 +33,8 @@ func resourceDMERecord() *schema.Resource {
 			},
 			"value": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Default:  "",
 				StateFunc: func(value interface{}) string {
 					return strings.ToLower(value.(string))
 				},
@@ -163,17 +164,14 @@ func resourceDMERecordDelete(d *schema.ResourceData, meta interface{}) error {
 }
 
 func getAll(d *schema.ResourceData, cr map[string]interface{}) error {
-	attr := d.Get("name")
-	cr["name"] = attr.(string)
+	cr["name"] = d.Get("name").(string)
+	cr["value"] = d.Get("value").(string)
 
 	if attr, ok := d.GetOk("type"); ok {
 		cr["type"] = attr.(string)
 	}
 	if attr, ok := d.GetOk("ttl"); ok {
 		cr["ttl"] = int64(attr.(int))
-	}
-	if attr, ok := d.GetOk("value"); ok {
-		cr["value"] = attr.(string)
 	}
 	if attr, ok := d.GetOk("gtdLocation"); ok {
 		cr["gtdLocation"] = attr.(string)
